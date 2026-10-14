@@ -69,11 +69,9 @@ defmodule AshOaskit.MixProject do
       {:ash, ">= 3.34.6 and < 4.0.0"},
       {:spark, "~> 2.7.6"},
 
-      # Security floor: decimal < 3.1.0 has a DoS via unbounded exponent
-      # parsing (GHSA-rhv4-8758-jx7v / elixirforum 75261). Pulled
-      # transitively via Ash (~> 2.0 or ~> 3.0); ~> 3.1 narrows the
-      # resolution without needing override (hex.publish forbids overrides).
-      {:decimal, "~> 3.1"},
+      # Decimal 3.1.2 fixes scale-driven memory exhaustion in round/3
+      # (CVE-2026-97853) and retains the exponent-parsing security fix.
+      {:decimal, ">= 3.1.2 and < 4.0.0"},
 
       # OpenAPI spec normalization, validation, and rendering
       {:oaskit, "~> 0.17.0"},

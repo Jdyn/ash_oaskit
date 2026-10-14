@@ -9,8 +9,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
-- Updated Ash to 3.31 and Igniter to 0.8.3. The resolved dependency refresh also
+- Updated Ash to 3.36 and Igniter to 0.8.4. The resolved dependency refresh also
   includes Mint's HTTP/1 header-size and HTTP/2 continuation-frame security fixes.
+- Updated Decimal to 3.2.0, Oaskit to 0.17.1, Phoenix.PubSub to 2.4.1, and
+  Sourceror to 1.12.4. Require Decimal 3.1.2 or newer to include the
+  scale-driven memory-exhaustion fix (CVE-2026-97853).
 - Custom Ash types now receive their declared constraints in `json_schema/1`,
   matching AshJsonApi's callback contract.
 

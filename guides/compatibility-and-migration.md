@@ -3,7 +3,8 @@
 Changes to generated contracts require regenerating snapshots and clients;
 do not patch exported JSON by hand. Use `SpecModifier` for application-specific changes.
 
-- Dependencies now require Ash 3.34.3+, Spark 2.7.6+, Plug 1.20.3+, and Oaskit 0.17.0+.
+- Dependencies now require Ash 3.34.6+, Spark 2.7.6+, Plug 1.20.3+, Oaskit 0.17.0+,
+  and Decimal 3.1.2+.
   Optional integrations require AshJsonApi 1.7.1+, Phoenix 1.8.13+, and Igniter 0.6.29+.
   Configure `config :ash, default_string_length_count: :codepoints` in the consuming app.
 - Decimal output and defaults are exact strings. Decimal inputs may also be numbers.
@@ -54,7 +55,7 @@ mix run scripts/verify_consumer.exs locked
 
 Consumer fixtures resolve without dependency overrides. The selected compatible
 minimum set uses Jason 1.4.5: Jason 1.4.0–1.4.4 exclude Decimal 3 and cannot be
-combined with this library's Decimal 3.1 security floor. The `locked` fixture copies
+combined with this library's Decimal 3.1.2 security floor. The `locked` fixture copies
 the checkout lockfile into an isolated consumer; the other fixtures resolve afresh.
 They exercise spec generation and Plug serving; integration fixtures also exercise
 Phoenix introspection and Igniter scaffolding. Notebook checks evaluate executable
