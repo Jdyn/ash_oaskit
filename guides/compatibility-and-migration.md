@@ -66,6 +66,11 @@ terminal escape injection in package confirmation prompts; Igniter 0.8.4 fixes
 [GHSA-cj7w-j579-gc42](https://github.com/ash-project/igniter/security/advisories/GHSA-cj7w-j579-gc42).
 The checkout locks the patched release. Applications manage their own lockfiles.
 
+The dependency refresh also locks Plug.Crypto 2.2.1, which prevents secret key base
+values from appearing in logs after invalid arguments (CVE-2026-105963). Update
+consumer lockfiles with `mix deps.update plug_crypto`; see its
+[changelog](https://github.com/elixir-plug/plug_crypto/blob/v2.2.1/CHANGELOG.md).
+
 Publishing additionally requires a package-scoped `HEX_API_KEY` in the protected
 `hex-publish` environment. An existing repository secret cannot be read back for migration;
 a maintainer must provision the environment secret and remove the repository-scoped copy.
