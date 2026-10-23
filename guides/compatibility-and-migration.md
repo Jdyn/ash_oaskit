@@ -76,6 +76,14 @@ values from appearing in logs after invalid arguments (CVE-2026-105963). Update
 consumer lockfiles with `mix deps.update plug_crypto`; see its
 [changelog](https://github.com/elixir-plug/plug_crypto/blob/v2.2.1/CHANGELOG.md).
 
+For applications using Ash 3.37 or newer with keyset pagination, follow Ash's
+[keyset signing guidance](https://hexdocs.pm/ash/3.37.0/backwards-compatibility-config.html#keyset_signing_secret)
+to configure `:keyset_signing_secret` in the application. Keep the production
+secret outside source control. Enabling signing or rotating the secret invalidates
+existing cursors, so affected clients must restart from the first page. Generated
+`page[after]` and `page[before]` parameters remain opaque strings that clients pass
+back unchanged.
+
 Publishing additionally requires a package-scoped `HEX_API_KEY` in the protected
 `hex-publish` environment. An existing repository secret cannot be read back for migration;
 a maintainer must provision the environment secret and remove the repository-scoped copy.

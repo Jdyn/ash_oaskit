@@ -5,6 +5,24 @@ defmodule AshOaskit.QueryParametersTest do
 
   alias AshOaskit.QueryParameters
 
+  test "generated pagination describes cursors as opaque tokens in both versions" do
+    for version <- ["3.0", "3.1"] do
+      spec = AshOaskit.spec(domains: [AshOaskit.Test.Blog], version: version)
+      params = spec["paths"]["/posts"]["get"]["parameters"]
+      page = Enum.find(params, &(&1["name"] == "page"))
+      assert {:ok, _} = AshOaskit.validate(spec)
+
+      for direction <- ["after", "before"] do
+        cursor = page["schema"]["properties"][direction]
+        assert cursor["type"] == "string"
+        assert cursor["description"] =~ "Opaque cursor returned by the API"
+        assert cursor["description"] =~ "Pass it back unchanged"
+        refute Map.has_key?(cursor, "pattern")
+        refute Map.has_key?(cursor, "maxLength")
+      end
+    end
+  end
+
   test "route parameters honor derivation flags and actual pagination" do
     pagination = %{
       offset?: true,

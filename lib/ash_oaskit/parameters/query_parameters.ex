@@ -112,7 +112,11 @@ defmodule AshOaskit.QueryParameters do
 
       properties =
         if pagination.keyset?,
-          do: Map.merge(properties, %{"after" => %{type: :string}, "before" => %{type: :string}}),
+          do:
+            Map.merge(properties, %{
+              "after" => cursor_schema("after"),
+              "before" => cursor_schema("before")
+            }),
           else: properties
 
       properties =
@@ -446,14 +450,8 @@ defmodule AshOaskit.QueryParameters do
 
   defp build_pagination_properties(:keyset) do
     %{
-      "after" => %{
-        type: :string,
-        description: "Cursor for fetching records after this position"
-      },
-      "before" => %{
-        type: :string,
-        description: "Cursor for fetching records before this position"
-      },
+      "after" => cursor_schema("after"),
+      "before" => cursor_schema("before"),
       "limit" => %{
         type: :integer,
         minimum: 1,
@@ -480,14 +478,8 @@ defmodule AshOaskit.QueryParameters do
         maximum: 1000,
         description: "Maximum number of records to return"
       },
-      "after" => %{
-        type: :string,
-        description: "Cursor for fetching records after this position (keyset pagination)"
-      },
-      "before" => %{
-        type: :string,
-        description: "Cursor for fetching records before this position (keyset pagination)"
-      },
+      "after" => cursor_schema("after"),
+      "before" => cursor_schema("before"),
       "count" => %{
         type: :boolean,
         description: "Include total count in response"
@@ -496,6 +488,14 @@ defmodule AshOaskit.QueryParameters do
   end
 
   defp build_pagination_properties(_), do: build_pagination_properties(:both)
+
+  defp cursor_schema(direction) do
+    %{
+      type: :string,
+      description:
+        "Opaque cursor returned by the API for fetching records #{direction} this position. Pass it back unchanged."
+    }
+  end
 
   defp build_pagination_description(:offset) do
     "Offset-based pagination. Use 'offset' and 'limit' to paginate results."
