@@ -7,6 +7,10 @@ defmodule AshOaskit.TypeMapper do
   since JSON Schema numeric bounds do not apply to decimal strings. Pass
   `direction: :input` to accept numeric decimal inputs as well as strings.
 
+  Times and naive datetimes use patterns for their local ISO 8601 strings.
+  They have no timezone offset, so RFC 3339 `time` and `date-time` formats
+  would reject their serialized values. UTC datetimes retain `date-time`.
+
   This module handles the conversion of Ash resource attributes to their
   corresponding JSON Schema representations, respecting the differences
   between OpenAPI versions.
@@ -29,12 +33,12 @@ defmodule AshOaskit.TypeMapper do
   | `:decimal` | `string` | exact decimal pattern |
   | `:boolean` | `boolean` | - |
   | `:date` | `string` | `date` |
-  | `:time` | `string` | `time` |
-  | `:time_usec` | `string` | `time` |
+  | `:time` | `string` | local ISO 8601 pattern |
+  | `:time_usec` | `string` | local ISO 8601 pattern |
   | `:datetime` | `string` | `date-time` |
   | `:utc_datetime` | `string` | `date-time` |
   | `:utc_datetime_usec` | `string` | `date-time` |
-  | `:naive_datetime` | `string` | `date-time` |
+  | `:naive_datetime` | `string` | local ISO 8601 pattern |
   | `:duration` | `string` | `duration` |
   | `:uuid` | `string` | `uuid` |
   | `:uuid_v7` | `string` | `uuid` |
@@ -94,6 +98,8 @@ defmodule AshOaskit.TypeMapper do
   require Logger
 
   @uuid_v7_pattern "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-7[0-9a-fA-F]{3}-[89aAbB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}$"
+  @local_time_pattern "(?:[01][0-9]|2[0-3]):[0-5][0-9]:[0-5][0-9](?:\\.[0-9]{1,6})?"
+  @local_date_pattern "-?[0-9]{4}-(?:0[1-9]|1[0-2])-(?:0[1-9]|[12][0-9]|3[01])"
 
   @doc """
   Convert an Ash attribute to a JSON Schema for OpenAPI 3.1.
@@ -247,12 +253,15 @@ defmodule AshOaskit.TypeMapper do
     },
     boolean: %{"type" => "boolean"},
     date: %{"type" => "string", "format" => "date"},
-    time: %{"type" => "string", "format" => "time"},
-    time_usec: %{"type" => "string", "format" => "time"},
+    time: %{"type" => "string", "pattern" => "^#{@local_time_pattern}$"},
+    time_usec: %{"type" => "string", "pattern" => "^#{@local_time_pattern}$"},
     datetime: %{"type" => "string", "format" => "date-time"},
     utc_datetime: %{"type" => "string", "format" => "date-time"},
     utc_datetime_usec: %{"type" => "string", "format" => "date-time"},
-    naive_datetime: %{"type" => "string", "format" => "date-time"},
+    naive_datetime: %{
+      "type" => "string",
+      "pattern" => "^#{@local_date_pattern}T#{@local_time_pattern}$"
+    },
     duration: %{"type" => "string", "format" => "duration"},
     uuid: %{"type" => "string", "format" => "uuid"},
     uuid_v7: %{"type" => "string", "format" => "uuid"},

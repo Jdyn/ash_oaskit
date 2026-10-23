@@ -89,24 +89,24 @@ defmodule AshOaskit.FormatStringsTest do
       assert schema["format"] == "date"
     end
 
-    test "time format (RFC 3339 full-time)" do
-      attr = %{
-        name: :start_time,
-        type: :time,
-        allow_nil?: false,
-        constraints: [],
-        description: nil,
-        default: nil
-      }
-
-      schema = TypeMapper.to_json_schema_31(attr)
-
-      assert schema["type"] == "string"
-      assert schema["format"] == "time"
+    test "local times and naive datetimes use patterns without RFC 3339 formats" do
+      for {type, wire} <- [
+            {:time, "14:30:45"},
+            {:time_usec, "14:30:45.123456"},
+            {:naive_datetime, "2026-10-23T14:30:45"}
+          ] do
+        schema = TypeMapper.to_json_schema_31(%{type: type, allow_nil?: false})
+        assert schema["type"] == "string"
+        assert is_binary(schema["pattern"])
+        refute Map.has_key?(schema, "format")
+        validator = JSV.build!(schema, formats: true)
+        assert {:ok, ^wire} = JSV.validate(wire, validator)
+        assert {:error, _} = JSV.validate(wire <> "Z", validator)
+      end
     end
 
     test "date-time format (RFC 3339 date-time)" do
-      datetime_types = [:datetime, :utc_datetime, :utc_datetime_usec, :naive_datetime]
+      datetime_types = [:datetime, :utc_datetime, :utc_datetime_usec]
 
       for type <- datetime_types do
         attr = %{

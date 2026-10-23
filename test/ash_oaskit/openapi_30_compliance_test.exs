@@ -283,13 +283,17 @@ defmodule AshOaskit.OpenAPI30ComplianceTest do
       assert schema["format"] == "date"
     end
 
-    test "time type has time format" do
-      schema = TypeMapper.to_json_schema_30(mock_attr(%{type: :time}))
-      assert schema["format"] == "time"
+    test "local temporal types use string patterns" do
+      for type <- [:time, :time_usec, :naive_datetime] do
+        schema = TypeMapper.to_json_schema_30(%{type: type, allow_nil?: false})
+        assert schema["type"] == "string"
+        assert is_binary(schema["pattern"])
+        refute Map.has_key?(schema, "format")
+      end
     end
 
     test "datetime types have date-time format" do
-      for type <- [:datetime, :utc_datetime, :utc_datetime_usec, :naive_datetime] do
+      for type <- [:datetime, :utc_datetime, :utc_datetime_usec] do
         schema = TypeMapper.to_json_schema_30(mock_attr(%{type: type}))
 
         assert schema["format"] == "date-time",
