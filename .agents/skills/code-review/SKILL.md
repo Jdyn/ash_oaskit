@@ -16,6 +16,11 @@ Select checks by the mechanism changed:
   check request/response semantics, component ownership, recursion, reference
   resolution, route collisions, and serialized consumer behavior. A static
   schema assertion and a real payload validation establish different evidence.
+  Challenge the changed invariant with a plausible broken result: lost enum/
+  composition constraint after nullable conversion, private fields exposed,
+  literal example `$ref` traversed as a schema, unresolved recursion or cached
+  output contaminated by a different version. Expected values must not simply
+  call the same builder under review.
 - Optional integrations and serving: check compile-time module availability,
   generated macros/routes, content type, format handling, request inputs, and
   cache/customization boundaries reached by the change.
@@ -34,6 +39,10 @@ Select checks by the mechanism changed:
 - Package or release changes: inspect `mix.exs`, affected workflow jobs, and
   [release controls](../../../CONTRIBUTING.md#releasing). Distinguish local
   checks from remote CI and external controls that were actually observed.
+  Read the archive-consumer script before use: `minimal`, `minimum`,
+  `integrations` and `locked` inputs establish different proof. Keep extracted archive, actual host and
+  published registry results separate. An unavailable package lane does not
+  prevent substantive source review and cannot become a compatibility pass.
 
 Output: actionable findings ordered by impact, each with `path:line`, the
 trigger, consequence, evidence, and smallest useful fix. Separate confirmed

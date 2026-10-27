@@ -20,9 +20,17 @@ from callers and tests; clarify only unresolved product behavior.
 3. Trace only the optional integration seams the mechanism reaches: AshJsonApi,
    Phoenix, Igniter, custom SpecBuilder, or serving adapters. Separate base
    library compilation from integration behavior and cached consumer behavior.
-4. Select focused owner tests and an end-to-end assertion at the public
-   boundary. Exercise both versions for shared behavior. Identify docs and
-   package content affected by the change before updating them.
+4. For each changed invariant, name the public resource/route trigger,
+   enforcing builder, normalized/serialized output and observable accepted or
+   rejected payload. Derive the expected shape independently of the builder.
+   Exercise both versions for shared behavior; an overall green document does
+   not establish every changed invariant.
+5. Select focused owner tests plus the affected public boundary. For serializer
+   claims use [actual payload tests](../../../test/ash_oaskit/serialized_payload_test.exs),
+   not only a hand-written schema fragment. A schema that validates can still
+   reject the real response. For caching/customization, inspect repeated and
+   changed-version calls without assuming a cache miss proves cached behavior.
+   Identify affected docs/package content before editing.
 
 Read [the public facade](../../../lib/ash_oaskit.ex) and
 [version routing](../../../lib/ash_oaskit/open_api.ex) for generation changes,
@@ -31,7 +39,10 @@ and [the generator](../../../lib/ash_oaskit/generators/generator.ex) for
 resource scope and shared builder context. Read `mix.exs` and
 [consumer checks](../../../scripts/verify_consumer.exs) only when package or
 optional-dependency compatibility is at stake; inspect their prerequisites
-before running them.
+before running them. Its `minimal`, `minimum`, `integrations` and `locked`
+modes all use an extracted Hex archive, but establish different dependency and
+optional-integration claims. A checkout compile is a separate tier. Inspect
+fetch/build and temporary-host effects before selecting archive proof.
 
 Output: the affected contract and consumers, the implementation owner, the
 selected verification boundaries, and unresolved compatibility questions.

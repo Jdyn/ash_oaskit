@@ -17,7 +17,10 @@ that claim.
 2. Keep examples internally consistent and executable at the stated boundary.
    Distinguish code run in this checkout from package installation, generated
    document validation, and downstream application execution. Label schematic
-   examples as such rather than presenting them as tested output.
+   examples as such rather than presenting them as tested output. Bind an
+   observed example to the OpenAPI version, serializer, cache/customization
+   mode, fixture and source/dependency identity. A generated schema declaration
+   cannot substitute for validation of the payload the text promises.
 3. Put the guidance in the reader's existing document. Keep README and
    `usage-rules.md` type tables aligned when mappings change; keep operational
    contribution and release procedures in CONTRIBUTING.md. Avoid duplicating
@@ -38,3 +41,8 @@ Output: revised text and examples in their owning files, with a concise account
 of claims checked, examples actually exercised, and remaining limitations.
 Keep library terminology and exact commands intact; replace generic quality,
 performance, or compatibility claims with the observable behavior and evidence.
+Rerun examples when a relevant input changes; retain unrelated valid evidence
+with its original scope. Guidance-only edits use source metadata/reference and
+semantic review, not package builds or dependency installation. Before an
+archive/notebook run, inspect prerequisite effects and output paths; remove only
+new disposable outputs owned by that run, never retained examples or caches.

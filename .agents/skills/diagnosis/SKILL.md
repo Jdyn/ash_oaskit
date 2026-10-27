@@ -16,12 +16,18 @@ fragment. Gather the missing evidence from the failing test or caller.
 2. Follow the failing value through version selection, the owning builder,
    and normalization. Probe a causal hypothesis that predicts a different
    result from alternatives; record actual probe results in the task conversation.
-3. Fix the owner of the mismatch. If attempted fixes contradict the evidence,
-   revisit the assumptions about schema ownership, route identity, state/cache,
-   or version behavior before adding more patches.
-4. Retain a focused regression that fails on the original defect and passes
-   with the fix. Assert the relevant document fragment or payload acceptance
-   and rejection; rerun the minimized reproduction and affected boundary tests.
+3. Fix the owner of the mismatch. If a probe rejects the hypothesis, remove
+   only the exploratory edits it motivated, preserving unrelated work and
+   independently useful diagnostics. Retain the rejected evidence in task notes
+   so a resumed investigation does not repeat it. Reopen schema ownership,
+   route identity, state/cache or version assumptions when successive patches
+   fail to explain the observation; do not accumulate rescue/retry branches.
+4. Retain a focused regression that fails at the intended assertion on the
+   original defect and passes with the fix. A dependency, fixture or optional
+   module startup failure is not this red path. Assert independently expected
+   document bytes/shape or actual payload acceptance and rejection; rerun the
+   minimized reproduction and affected boundary tests. Preserve exact source,
+   version, route/resource, cache mode and fixture identity with results.
 
 Load sources according to the symptom:
 

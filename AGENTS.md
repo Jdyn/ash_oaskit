@@ -102,7 +102,11 @@ Plug is a required dependency.
   Run `mix deps.unlock --check-unused` separately for dependency changes;
   it is not in `.check.exs`.
   For guidance-only changes, validate metadata, file references, Git tracking
-  and ignore boundaries, and discovery links with existing tools.
+  and ignore boundaries, and discovery links with existing tools. Do not
+  install dependencies, compile optional hosts or build archives solely for
+  instructions. Before an authorized consumer/notebook run inspect free disk,
+  script effects and output paths; clean only disposable outputs created by
+  that run, preserving shared caches and retained evidence.
 - Run notebook, benchmark, or packaged-consumer checks only when the change
   needs their evidence. Inspect their existing scripts and CONTRIBUTING.md
   first; do not install dependencies or add tooling without authorization.
