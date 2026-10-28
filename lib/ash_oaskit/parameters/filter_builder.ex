@@ -127,7 +127,7 @@ defmodule AshOaskit.FilterBuilder do
   """
   @spec build_filter_parameter(module(), keyword()) :: map() | nil
   def build_filter_parameter(resource, opts \\ []) do
-    if derive_filter?(resource) do
+    if Config.derive_filter?(resource) do
       %{
         name: "filter",
         in: :query,
@@ -342,7 +342,7 @@ defmodule AshOaskit.FilterBuilder do
 
   defp filterable_relationship?(resource, relationship) do
     Config.show_field?(resource, relationship) and Map.get(relationship, :filterable?, true) and
-      derive_filter?(relationship.destination)
+      Config.derive_filter?(relationship.destination)
   end
 
   defp filter_reference(resource, opts) do
@@ -355,9 +355,6 @@ defmodule AshOaskit.FilterBuilder do
       },
       else: %{type: :object}
   end
-
-  @spec derive_filter?(module()) :: boolean()
-  defp derive_filter?(resource), do: Config.derive_filter?(resource)
 
   @spec resource_name(module()) :: String.t()
   defp resource_name(resource) do
