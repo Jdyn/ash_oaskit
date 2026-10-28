@@ -18,10 +18,14 @@ defmodule AshOaskit.GenericRoutesTest do
       end
     end
 
-    test "operation ids use the declared method", %{spec: spec} do
-      operation = spec["paths"]["/gadgets/{id}/activate"]["post"]
-
-      assert operation["operationId"] == "post_gadget_activate"
+    test "operation ids use the route name, or the declared method when unnamed" do
+      for spec <- [
+            AshOaskit.spec_30(domains: [AshOaskit.Test.Workshop]),
+            AshOaskit.spec_31(domains: [AshOaskit.Test.Workshop])
+          ] do
+        assert spec["paths"]["/gadgets/{id}/activate"]["post"]["operationId"] == "power_up"
+        assert spec["paths"]["/gadgets/search"]["get"]["operationId"] == "get_gadget_search"
+      end
     end
   end
 

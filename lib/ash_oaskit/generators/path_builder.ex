@@ -10,7 +10,7 @@ defmodule AshOaskit.Generators.PathBuilder do
   For each route defined in an Ash domain, this module generates:
 
   - Path item with the appropriate HTTP method
-  - Operation with operationId, summary, tags
+  - Operation with operationId (the route's `name` when set), summary, tags
   - Parameters (path, query)
   - Request body (for POST/PATCH)
   - Response definitions
@@ -201,14 +201,22 @@ defmodule AshOaskit.Generators.PathBuilder do
 
   # Builds paths from Ash domain routes
   defp build_ash_paths(domains, opts) do
-    opts
-    |> Keyword.get_lazy(:route_pairs, fn -> Enum.flat_map(domains, &get_domain_routes/1) end)
-    |> Enum.uniq()
-    |> Enum.map(fn {path, route} ->
-      {convert_path_params(path), route_to_method(route), build_operation(route, opts)}
-    end)
+    routes =
+      opts
+      |> Keyword.get_lazy(:route_pairs, fn -> Enum.flat_map(domains, &get_domain_routes/1) end)
+      |> Enum.uniq()
+      |> Enum.map(fn {path, route} ->
+        {convert_path_params(path), route_to_method(route), route}
+      end)
+
+    routes
+    |> Enum.map(fn {path, method, route} -> {path, method, build_operation(route, opts)} end)
     |> PathRegistry.from_operations()
-    |> PathRegistry.disambiguate()
+    |> PathRegistry.disambiguate(named_operations(routes))
+  end
+
+  defp named_operations(routes) do
+    for {path, method, %{name: name}} <- routes, is_binary(name), do: {path, method}
   end
 
   # Builds paths from Phoenix controller routes (if router is provided)
@@ -252,8 +260,11 @@ defmodule AshOaskit.Generators.PathBuilder do
   defp route_type_to_method(:patch), do: "patch"
   defp route_type_to_method(:delete), do: "delete"
 
-  # Builds operation ID from resource, action, route type, and path
-  # The path prefix is included for nested routes to ensure uniqueness
+  # The route's name when set, otherwise an ID built from resource, action,
+  # route type, and path. The path prefix is included for nested routes to
+  # ensure uniqueness
+  defp build_operation_id(%{name: name}) when is_binary(name), do: name
+
   defp build_operation_id(route) do
     method = route_to_method(route)
 
