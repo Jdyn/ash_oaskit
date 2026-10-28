@@ -450,12 +450,7 @@ defmodule AshOaskit.SchemaBuilder do
     ResourceSchemas.add_resource_schemas(builder, resource, Keyword.merge(builder_opts, opts))
   end
 
-  @doc """
-  Adds the recursive filter component for a resource.
-
-  Resources that disable filter derivation with `derive_filter? false` get no
-  filter component.
-  """
+  @doc "Adds the recursive filter component for a resource."
   @spec add_filter_schema(t(), module(), String.t(), function()) :: t()
   def add_filter_schema(builder, resource, name, add_schema_fn) do
     if Config.derive_filter?(resource) do

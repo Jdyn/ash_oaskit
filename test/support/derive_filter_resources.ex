@@ -1,8 +1,3 @@
-# Fixtures for resource-level `derive_filter? false`.
-#
-# - `Owner` - routed with an index, filtering disabled on the resource
-# - `Pet`   - routed with an index, filtering enabled, related to Owner
-
 defmodule AshOaskit.Test.Kennel.Owner do
   @moduledoc false
   use Ash.Resource,
@@ -17,16 +12,7 @@ defmodule AshOaskit.Test.Kennel.Owner do
   attributes do
     uuid_primary_key :id
 
-    attribute :name, :string do
-      public? true
-      allow_nil? false
-    end
-  end
-
-  relationships do
-    has_many :pets, AshOaskit.Test.Kennel.Pet do
-      public? true
-    end
+    attribute :name, :string, public?: true
   end
 
   actions do
@@ -47,10 +33,7 @@ defmodule AshOaskit.Test.Kennel.Pet do
   attributes do
     uuid_primary_key :id
 
-    attribute :name, :string do
-      public? true
-      allow_nil? false
-    end
+    attribute :name, :string, public?: true
   end
 
   relationships do
