@@ -165,7 +165,7 @@ defmodule AshOaskit.FilterBuilder do
     relationships =
       resource
       |> ResourceInfo.public_relationships()
-      |> Enum.filter(&(Config.show_field?(resource, &1) and Map.get(&1, :filterable?, true)))
+      |> Enum.filter(&filterable_relationship?(resource, &1))
       |> Map.new(
         &{Config.json_field_name(resource, &1.name), filter_reference(&1.destination, opts)}
       )
@@ -338,6 +338,11 @@ defmodule AshOaskit.FilterBuilder do
         description: "Condition must not match"
       }
     }
+  end
+
+  defp filterable_relationship?(resource, relationship) do
+    Config.show_field?(resource, relationship) and Map.get(relationship, :filterable?, true) and
+      derive_filter?(relationship.destination)
   end
 
   defp filter_reference(resource, opts) do
