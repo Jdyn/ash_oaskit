@@ -5,6 +5,7 @@ defmodule AshOaskit.Generators.PathBuilderTest do
 
   alias AshJsonApi.Domain.Info
   alias AshOaskit.Generators.PathBuilder
+  alias AshOaskit.RelationshipRoutes
   alias AshOaskit.Test.Blog
   alias AshOaskit.Test.EdgeCaseDomain
   alias AshOaskit.Test.Publishing
@@ -279,6 +280,11 @@ defmodule AshOaskit.Generators.PathBuilderTest do
 
         operation = PathBuilder.build_operation(route, version: "3.1")
         assert operation[:operationId] == "gadget_#{type}"
+      end
+
+      for route <- Info.routes(Publishing), RelationshipRoutes.relationship_route?(route) do
+        operation = PathBuilder.build_operation(%{route | name: "named"}, version: "3.1")
+        assert operation[:operationId] == "named"
       end
     end
 

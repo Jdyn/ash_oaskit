@@ -10,7 +10,7 @@ defmodule AshOaskit.Generators.PathBuilder do
   For each route defined in an Ash domain, this module generates:
 
   - Path item with the appropriate HTTP method
-  - Operation with operationId (the route's `name` when set), summary, tags
+  - Operation with operationId, summary, tags
   - Parameters (path, query)
   - Request body (for POST/PATCH)
   - Response definitions
@@ -156,10 +156,16 @@ defmodule AshOaskit.Generators.PathBuilder do
       end
 
     operation
+    |> put_route_name(route)
     |> Map.update!(:responses, &Map.merge(&1, AshOaskit.ErrorSchemas.all_error_responses()))
     |> Map.put(:tags, AshOaskit.TagBuilder.operation_tags(route, opts))
     |> AshOaskit.MultipartSupport.add_route_content(route, opts)
   end
+
+  defp put_route_name(operation, %{name: name}) when is_binary(name),
+    do: Map.put(operation, :operationId, name)
+
+  defp put_route_name(operation, _), do: operation
 
   # Builds an operation for a generic action route (`route :post, "...", :action`)
   defp build_generic_operation(route, version) do
@@ -260,11 +266,8 @@ defmodule AshOaskit.Generators.PathBuilder do
   defp route_type_to_method(:patch), do: "patch"
   defp route_type_to_method(:delete), do: "delete"
 
-  # The route's name when set, otherwise an ID built from resource, action,
-  # route type, and path. The path prefix is included for nested routes to
-  # ensure uniqueness
-  defp build_operation_id(%{name: name}) when is_binary(name), do: name
-
+  # Builds operation ID from resource, action, route type, and path
+  # The path prefix is included for nested routes to ensure uniqueness
   defp build_operation_id(route) do
     method = route_to_method(route)
 

@@ -4,7 +4,9 @@ defmodule AshOaskit.GenericRoutesTest do
   use ExUnit.Case, async: true
 
   setup_all do
-    {:ok, spec: AshOaskit.spec_31(domains: [AshOaskit.Test.Workshop])}
+    {:ok,
+     spec: AshOaskit.spec_31(domains: [AshOaskit.Test.Workshop]),
+     spec_30: AshOaskit.spec_30(domains: [AshOaskit.Test.Workshop])}
   end
 
   describe "HTTP methods" do
@@ -18,11 +20,8 @@ defmodule AshOaskit.GenericRoutesTest do
       end
     end
 
-    test "operation ids use the route name, or the declared method when unnamed" do
-      for spec <- [
-            AshOaskit.spec_30(domains: [AshOaskit.Test.Workshop]),
-            AshOaskit.spec_31(domains: [AshOaskit.Test.Workshop])
-          ] do
+    test "operation ids use the route name, or the declared method when unnamed", context do
+      for spec <- [context.spec_30, context.spec] do
         assert spec["paths"]["/gadgets/{id}/activate"]["post"]["operationId"] == "power_up"
         assert spec["paths"]["/gadgets/search"]["get"]["operationId"] == "get_gadget_search"
       end
@@ -95,9 +94,7 @@ defmodule AshOaskit.GenericRoutesTest do
       assert {:ok, %Oaskit.Spec.OpenAPI{}} = AshOaskit.validate(spec)
     end
 
-    test "3.0 specs with generic routes pass Oaskit validation" do
-      spec = AshOaskit.spec_30(domains: [AshOaskit.Test.Workshop])
-
+    test "3.0 specs with generic routes pass Oaskit validation", %{spec_30: spec} do
       assert {:ok, %Oaskit.Spec.OpenAPI{}} = AshOaskit.validate(spec)
     end
   end

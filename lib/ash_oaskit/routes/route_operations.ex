@@ -8,8 +8,7 @@ defmodule AshOaskit.RelationshipRoutes.RouteOperations do
 
   ## Operations
 
-  Each relationship route type generates a different operation. A route's
-  `name` replaces the generated operation ID:
+  Each relationship route type generates a different operation:
 
   | Route Type | Method | Operation ID Pattern |
   |------------|--------|---------------------|
@@ -76,12 +75,9 @@ defmodule AshOaskit.RelationshipRoutes.RouteOperations do
 
   ## Returns
 
-  The route's `name` when set, otherwise a unique operation identifier
-  derived from the resource, relationship, and route type.
+  A unique operation identifier string.
   """
   @spec build_operation_id(map()) :: String.t()
-  def build_operation_id(%{name: name}) when is_binary(name), do: name
-
   def build_operation_id(route) do
     resource_name =
       route.resource

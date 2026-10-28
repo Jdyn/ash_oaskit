@@ -76,14 +76,7 @@ defmodule AshOaskit.Core.PathRegistry do
     |> build_operations(left, index)
   end
 
-  @doc """
-  Disambiguates generated identifiers with a deterministic method/path suffix.
-
-  Operations whose `{path, method}` is in `explicit` keep their declared
-  identifier: a generated identifier that collides with one is suffixed
-  instead, and duplicate explicit identifiers are left for `validate_ids!/1`
-  to reject.
-  """
+  @doc "Disambiguates generated identifiers with a deterministic method/path suffix."
   @spec disambiguate(map(), Enumerable.t({String.t(), String.t()})) :: map()
   def disambiguate(paths, explicit \\ []) do
     explicit = MapSet.new(explicit)

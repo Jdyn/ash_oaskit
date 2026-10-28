@@ -85,15 +85,6 @@ defmodule AshOaskit.RelationshipRoutes.RouteOperationsTest do
       assert RouteOperations.build_operation_id(mock_delete_from_relationship_route()) ==
                "post_comments_remove"
     end
-
-    test "a route name replaces the generated ID" do
-      for route <- [mock_related_route(), mock_delete_from_relationship_route()] do
-        named = %{route | name: "post_comments"}
-
-        assert RouteOperations.build_operation_id(named) == "post_comments"
-        assert RouteOperations.build_operation(named)[:operationId] == "post_comments"
-      end
-    end
   end
 
   describe "build_summary/1" do
